@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    {% for ad in ads %}
+        <p>{{ad.title}}</p>
+        <p>{{ad.content}}</p>
+        <p>{{ad.author}}</p>
+        <p>{{ad.date_of_create}}</p>
+    {% endfor %}
+{% endblock %}
