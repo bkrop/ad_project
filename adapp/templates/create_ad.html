@@ -5,9 +5,10 @@
 {% block content %}
     <form action="" method="POST">
         {{ form.hidden_tag() }}
-        <legend>Create ad!</legend>
+        <legend>{{ legend }}</legend>
         <p>{{ form.title.label }} {{ form.title }}</p>
         <p>{{ form.content.label }} {{ form.content }}</p>
+        <p>{{ form.reward.label }} {{ form.reward }}</p>
         {{ form.submit }}
     </form>
 {% endblock%}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Ad Page{% endblock %}
+
+{% block content %}
+    <p>Title: {{ ad.title }}</p>
+    <p>Content: {{ ad.content }}</p>
+    <p>Created by: {{ ad.author }}</p>
+    <p>Created: {{ ad.date_of_create.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+{% endblock %}

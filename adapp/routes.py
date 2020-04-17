@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, abort, request
 from adapp import app, db, bcrypt
 from adapp.models import User, Ad
 from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm
@@ -48,9 +48,33 @@ def logout():
 def create_ad():
     form = CreatingAdForm()
     if form.validate_on_submit():
-        new_ad = Ad(title=form.title.data, content=form.content.data, date_of_create=datetime.now())
+        new_ad = Ad(title=form.title.data, content=form.content.data, date_of_create=datetime.now(), reward=form.reward.data)
         new_ad.user_id = current_user.id
         db.session.add(new_ad)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('create_ad.html', form=form)
+    return render_template('create_ad.html', form=form, legend='Create ad!')
+
+@app.route('/ad_detail/<int:ad_id>')
+def ad_detail(ad_id):
+    ad = Ad.query.get_or_404(ad_id)
+    return render_template('ad_detail.html', ad=ad)
+
+@app.route('/ad_update/<int:ad_id>', methods=['GET', 'POST'])
+@login_required
+def update_ad(ad_id):
+    ad = Ad.query.get_or_404(ad_id)
+    if ad.author != current_user:
+        abort(404)
+    form = CreatingAdForm()
+    if request.method == 'GET':
+        form.title.data = ad.title
+        form.content.data = ad.content
+        form.reward.data = ad.reward
+    elif form.validate_on_submit():
+        ad.title = form.title.data
+        ad.content = form.content.data
+        ad.reward = form.reward.data
+        db.session.commit()
+        return redirect(url_for('ad_detail', ad_id=ad.id))
+    return render_template('create_ad.html', ad=ad, legend='Update ad!', form=form)
