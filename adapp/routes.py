@@ -78,3 +78,21 @@ def update_ad(ad_id):
         db.session.commit()
         return redirect(url_for('ad_detail', ad_id=ad.id))
     return render_template('create_ad.html', ad=ad, legend='Update ad!', form=form)
+
+@app.route('/delete_ad/<int:ad_id>')
+@login_required
+def delete_ad(ad_id):
+    ad = Ad.query.get_or_404(ad_id)
+    if ad.author != current_user:
+        abort(404)
+    db.session.delete(ad)
+    db.session.commit()
+    return redirect(url_for('home'))
+
+@app.route('/sign_in/<int:ad_id>')
+@login_required
+def sign_in(ad_id):
+    ad = Ad.query.get_or_404(ad_id)
+    ad.users.append(current_user)
+    db.session.commit()
+    return redirect(url_for('ad_detail', ad_id=ad.id))

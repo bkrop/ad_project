@@ -25,4 +25,4 @@ class CreatingAdForm(FlaskForm):
     title = StringField('Title', validators=[Length(min=5, max=100), DataRequired()])
     content = TextField('Content', validators=[DataRequired(), Length(min=5, max=300)])
     reward = StringField('Reward', validators=[DataRequired(), Length(min=1, max=100)])
-    submit = SubmitField('Create')
+    submit = SubmitField('Confirm')

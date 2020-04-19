@@ -7,4 +7,15 @@
     <p>Content: {{ ad.content }}</p>
     <p>Created by: {{ ad.author }}</p>
     <p>Created: {{ ad.date_of_create.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    {% if ad.author != current_user and current_user not in ad.users %}
+        <p><a href="{{ url_for('sign_in', ad_id=ad.id) }}">Sign in this ad</a></p>
+    {% endif %}
+    {% if ad.author == current_user %}
+        <a href="{{ url_for('delete_ad', ad_id=ad.id) }}">Delete ad</a>
+        <a href="{{ url_for('update_ad', ad_id=ad.id) }}">Update ad</a>
+        <legend>Users signed in this ad</legend>
+        {% for user in ad.users %}
+            <p>{{ user }}</p>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
