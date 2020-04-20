@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, abort, request
 from adapp import app, db, bcrypt
 from adapp.models import User, Ad
-from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm
+from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm, EditProfileForm
 from flask_login import login_user, logout_user, current_user, login_required
 from datetime import datetime
 
@@ -96,3 +96,23 @@ def sign_in(ad_id):
     ad.users.append(current_user)
     db.session.commit()
     return redirect(url_for('ad_detail', ad_id=ad.id))
+
+@app.route('/user_detail/<int:user_id>')
+@login_required
+def user_detail(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('user_detail.html', user=user)
+
+@app.route('/update_profile/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def update_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    if current_user != user:
+        abort(404)
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        user.description = form.description.data
+        db.session.commit()
+    elif request.method == 'GET':
+        form.description.data = user.description
+    return render_template('update_profile.html', form=form)

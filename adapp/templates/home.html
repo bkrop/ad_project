@@ -4,8 +4,8 @@
 
 {% block content %}
     {% for ad in ads %}
-        <a href="{{ url_for('ad_detail', ad_id=ad.id)}}">{{ad.title}}</a>
-        <p>Created by: {{ad.author.name}}</p>
+        <p><a href="{{ url_for('ad_detail', ad_id=ad.id)}}">{{ad.title}}</a></p>
+        <p>Created by: <a href="{{ url_for('user_detail', user_id=ad.author.id)}}">{{ad.author.name}}</a></p>
         <p>Created: {{ad.date_of_create.strftime('%Y-%m-%d %H:%M:%S')}}</p>
     {% endfor %}
 {% endblock %}

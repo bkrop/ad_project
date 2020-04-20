@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(60), nullable=False)
     name = db.Column(db.String(20), nullable=False)
+    description = db.Column(db.String(300), default='')
     ads = db.relationship('Ad', backref='author', lazy=True, foreign_keys='Ad.user_id')
     
 

@@ -5,7 +5,7 @@
 {% block content %}
     <p>Title: {{ ad.title }}</p>
     <p>Content: {{ ad.content }}</p>
-    <p>Created by: {{ ad.author }}</p>
+    <p>Created by: <a href="{{ url_for('user_detail', user_id=ad.author.id) }}">{{ ad.author }}</a></p>
     <p>Created: {{ ad.date_of_create.strftime('%Y-%m-%d %H:%M:%S') }}</p>
     {% if ad.author != current_user and current_user not in ad.users %}
         <p><a href="{{ url_for('sign_in', ad_id=ad.id) }}">Sign in this ad</a></p>
@@ -15,7 +15,7 @@
         <a href="{{ url_for('update_ad', ad_id=ad.id) }}">Update ad</a>
         <legend>Users signed in this ad</legend>
         {% for user in ad.users %}
-            <p>{{ user }}</p>
+            <p><a href="{{ url_for('user_detail', user_id=user.id) }}">{{ user }}</a></p>
         {% endfor %}
     {% endif %}
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Profile Page{% endblock %}
+
+{% block content %}
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+        <legend>Update Profile</legend>
+        <p>{{ form.description.label }} {{ form.description }}</p>
+        {{ form.submit }}
+    </form>
+{% endblock %}
