@@ -7,15 +7,24 @@
     <p>Content: {{ ad.content }}</p>
     <p>Created by: <a href="{{ url_for('user_detail', user_id=ad.author.id) }}">{{ ad.author }}</a></p>
     <p>Created: {{ ad.date_of_create.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-    {% if ad.author != current_user and current_user not in ad.users %}
+    {% if ad.author != current_user and current_user not in ad.users and ad.picked_for == 0 %}
         <p><a href="{{ url_for('sign_in', ad_id=ad.id) }}">Sign in this ad</a></p>
     {% endif %}
     {% if ad.author == current_user %}
+    {% if ad.author == current_user and ad.picked_for %}
+        <p>For this ad you picked user: {{ ad.picked_for }}</p>
+    {% endif %}
         <a href="{{ url_for('delete_ad', ad_id=ad.id) }}">Delete ad</a>
         <a href="{{ url_for('update_ad', ad_id=ad.id) }}">Update ad</a>
         <legend>Users signed in this ad</legend>
         {% for user in ad.users %}
+            {% if ad not in user.picked_for_ads %}
             <p><a href="{{ url_for('user_detail', user_id=user.id) }}">{{ user }}</a></p>
+            <form action="{{ url_for('pick_user', ad_id=ad.id, user_id=user.id) }}" method="POST">
+                {{ form.hidden_tag() }}
+                {{ form.submit }}
+            </form>
+            {% endif %}
         {% endfor %}
     {% endif %}
 {% endblock %}

@@ -31,3 +31,6 @@ class CreatingAdForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     description = TextAreaField('About me', validators=[Length(max=300)])
     submit = SubmitField('Update')
+
+class PickUserForm(FlaskForm):
+    submit = SubmitField('Pick for this ad')

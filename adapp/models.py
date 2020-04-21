@@ -9,6 +9,10 @@ users = db.Table('ad_users',
         db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
         db.Column('ad_id', db.Integer, db.ForeignKey('ad.id')))
 
+users_picked_for = db.Table('users_picked_for',
+        db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+        db.Column('ad_id', db.Integer, db.ForeignKey('ad.id')))
+
 class User(db.Model, UserMixin):
     id = db.Column('id', db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
@@ -16,6 +20,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(20), nullable=False)
     description = db.Column(db.String(300), default='')
     ads = db.relationship('Ad', backref='author', lazy=True, foreign_keys='Ad.user_id')
+    picked_for_ads = db.relationship('Ad', secondary=users_picked_for, backref=db.backref('picked_for', lazy=True, uselist=False))
     
 
     def __repr__(self):
