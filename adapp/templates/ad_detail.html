@@ -7,13 +7,17 @@
     <p>Content: {{ ad.content }}</p>
     <p>Created by: <a href="{{ url_for('user_detail', user_id=ad.author.id) }}">{{ ad.author }}</a></p>
     <p>Created: {{ ad.date_of_create.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-    {% if ad.author != current_user and current_user not in ad.users and ad.picked_for == 0 %}
+    {% if ad.author != current_user and current_user not in ad.users and ad.picked_for is none %}
         <p><a href="{{ url_for('sign_in', ad_id=ad.id) }}">Sign in this ad</a></p>
     {% endif %}
-    {% if ad.author == current_user %}
     {% if ad.author == current_user and ad.picked_for %}
         <p>For this ad you picked user: {{ ad.picked_for }}</p>
+        <form action="{{ url_for('finish_ad', ad_id=ad.id) }}" method="POST">
+            {{ finish_form.hidden_tag() }}
+            {{ finish_form.submit }}
+        </form>
     {% endif %}
+    {% if ad.author == current_user %}
         <a href="{{ url_for('delete_ad', ad_id=ad.id) }}">Delete ad</a>
         <a href="{{ url_for('update_ad', ad_id=ad.id) }}">Update ad</a>
         <legend>Users signed in this ad</legend>
@@ -26,5 +30,7 @@
             </form>
             {% endif %}
         {% endfor %}
+    {% elif ad.author != current_user and current_user in ad.users %}
+            <legend>You are signed in to this ad! You must wait for editor's pick!</legend>
     {% endif %}
 {% endblock %}

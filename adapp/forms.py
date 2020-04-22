@@ -34,3 +34,6 @@ class EditProfileForm(FlaskForm):
 
 class PickUserForm(FlaskForm):
     submit = SubmitField('Pick for this ad')
+
+class FinishAdForm(FlaskForm):
+    submit = SubmitField('Finish ad!')

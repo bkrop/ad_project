@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     name = db.Column(db.String(20), nullable=False)
     description = db.Column(db.String(300), default='')
+    rating = db.Column(db.Integer, default=0)
     ads = db.relationship('Ad', backref='author', lazy=True, foreign_keys='Ad.user_id')
     picked_for_ads = db.relationship('Ad', secondary=users_picked_for, backref=db.backref('picked_for', lazy=True, uselist=False))
     
@@ -32,5 +33,6 @@ class Ad(db.Model):
     content = db.Column(db.String(300), nullable=False)
     reward = db.Column(db.String(100), nullable=False)
     date_of_create = db.Column(db.DateTime, nullable=False)
+    is_finished = db.Column(db.Boolean, default=False)
     users = db.relationship('User', secondary=users, backref=db.backref('users', lazy=True))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
