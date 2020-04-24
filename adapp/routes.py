@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, abort, request
 from adapp import app, db, bcrypt
-from adapp.models import User, Ad
-from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm, EditProfileForm, PickUserForm, FinishAdForm
+from adapp.models import User, Ad, Rate, Comment
+from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm, EditProfileForm, PickUserForm, FinishAdForm, RateUserForm
 from flask_login import login_user, logout_user, current_user, login_required
 from datetime import datetime
 
@@ -127,7 +127,7 @@ def update_profile(user_id):
         form.description.data = user.description
     return render_template('update_profile.html', form=form)
 
-@app.route('/pick_user/<int:ad_id>/<int:user_id>', methods=['POST'])
+@app.route('/pick_user/<int:ad_id><int:user_id>', methods=['POST'])
 @login_required
 def pick_user(ad_id, user_id):
     ad = Ad.query.get_or_404(ad_id)
@@ -149,4 +149,27 @@ def finish_ad(ad_id):
     if finish_form.validate_on_submit():
         ad.is_finished = True
         db.session.commit()
+        return redirect(url_for('rate_user', user_id=ad.picked_for.id, ad_id=ad.id))
     return render_template('ad_detail.html', ad=ad, finish_form=finish_form)
+
+@app.route('/rate_user/<int:user_id><int:ad_id>', methods=['GET', 'POST'])
+@login_required
+def rate_user(user_id, ad_id):
+    user = User.query.get_or_404(user_id)
+    ad = Ad.query.get_or_404(ad_id)
+    if ad.is_finished == False or ad.rates:
+        abort(404)
+    form = RateUserForm()
+    if form.validate_on_submit():
+        rate = form.rate.data
+        if rate == 'thumb up':
+            user.rating += 1
+        else:
+            user.rating -= 1
+        new_rate = Rate()
+        new_rate.ad_id = ad.id
+        new_comment = Comment(content=form.comment.data, by=current_user, to=user)
+        db.session.add(new_rate, new_comment)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('rate_user.html', user=user, form=form)

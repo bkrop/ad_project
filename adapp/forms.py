@@ -1,6 +1,6 @@
 from adapp.models import User
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, RadioField
 from wtforms.validators import Email, equal_to, DataRequired, Length, ValidationError
 
 class RegistrationForm(FlaskForm):
@@ -37,3 +37,8 @@ class PickUserForm(FlaskForm):
 
 class FinishAdForm(FlaskForm):
     submit = SubmitField('Finish ad!')
+
+class RateUserForm(FlaskForm):
+    rate = RadioField('Rate user', validators=[DataRequired()], choices=[('thumb up', 'thumb up'), ('thumb down', 'thumb down')])
+    comment = TextAreaField('Comment', validators=[Length(max=100)])
+    submit = SubmitField('Confirm')
