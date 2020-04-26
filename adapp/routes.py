@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, abort, request
 from adapp import app, db, bcrypt
-from adapp.models import User, Ad, Rate, Comment
-from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm, EditProfileForm, PickUserForm, FinishAdForm, RateUserForm
+from adapp.models import Message, User, Ad, Rate, Comment
+from adapp.forms import RegistrationForm, LoginForm, CreatingAdForm, EditProfileForm, PickUserForm, FinishAdForm, RateUserForm, CreateMessageForm
 from flask_login import login_user, logout_user, current_user, login_required
 from datetime import datetime
 
@@ -44,7 +44,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('Successfully logged out!')
+    flash('Successfully logged out!', 'success')
     return redirect(url_for('home'))
 
 @app.route('/create_ad', methods=['POST', 'GET'])
@@ -82,7 +82,7 @@ def update_ad(ad_id):
         ad.content = form.content.data
         ad.reward = form.reward.data
         db.session.commit()
-        flash('Successfully updated!')
+        flash('Successfully updated!', 'success')
         return redirect(url_for('ad_detail', ad_id=ad.id))
     return render_template('create_ad.html', ad=ad, legend='Update ad!', form=form)
 
@@ -168,8 +168,26 @@ def rate_user(user_id, ad_id):
             user.rating -= 1
         new_rate = Rate()
         new_rate.ad_id = ad.id
-        new_comment = Comment(content=form.comment.data, by=current_user, to=user)
+        new_comment = Comment(content=form.comment.data, by=current_user, to=user, date_of_create=datetime.now())
         db.session.add(new_rate, new_comment)
         db.session.commit()
         return redirect(url_for('home'))
     return render_template('rate_user.html', user=user, form=form)
+
+@app.route('/send_message/<int:user_id>', methods=['POST', 'GET'])
+@login_required
+def send_message(user_id):
+    user = User.query.get_or_404(user_id)
+    form = CreateMessageForm()
+    if form.validate_on_submit():
+        new_message = Message(content=form.content.data, by=current_user, to=user, date_of_create=datetime.now())
+        db.session.add(new_message)
+        db.session.commit()
+        return redirect(url_for('user_detail', user_id=user.id))
+    return render_template('send_message.html', form=form, user=user)
+
+@app.route('/inbox')
+@login_required
+def inbox():
+    messages = current_user.messages_received
+    return render_template('inbox.html', messages=messages)

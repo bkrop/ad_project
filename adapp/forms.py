@@ -42,3 +42,7 @@ class RateUserForm(FlaskForm):
     rate = RadioField('Rate user', validators=[DataRequired()], choices=[('thumb up', 'thumb up'), ('thumb down', 'thumb down')])
     comment = TextAreaField('Comment', validators=[Length(max=100)])
     submit = SubmitField('Confirm')
+
+class CreateMessageForm(FlaskForm):
+    content = TextAreaField('Content', validators=[Length(min=1, max=300)])
+    submit = SubmitField('Send')

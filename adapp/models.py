@@ -24,10 +24,12 @@ class User(db.Model, UserMixin):
     picked_for_ads = db.relationship('Ad', secondary=users_picked_for, backref=db.backref('picked_for', lazy=True, uselist=False))
     comments_sent = db.relationship('Comment', backref='by', lazy=True, foreign_keys='Comment.user_id')
     comments_received = db.relationship('Comment', backref='to', lazy=True, foreign_keys='Comment.recipient_id')
+    messages_sent = db.relationship('Message', backref='by', lazy=True, foreign_keys='Message.user_id')
+    messages_received = db.relationship('Message', backref='to', lazy=True, foreign_keys='Message.recipient_id')
     
 
     def __repr__(self):
-        return f'{self.name}, {self.email}'
+        return f'{self.name}'
 
 class Ad(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
@@ -47,5 +49,13 @@ class Rate(db.Model):
 class Comment(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     content = db.Column(db.String(100))
+    date_of_create = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class Message(db.Model):
+    id = db.Column('id', db.Integer, primary_key=True)
+    content = db.Column(db.String(300))
+    date_of_create = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Inbox Page{% endblock %}
+
+{% block content %}
+    {% for message in messages %}
+        <p>Message from: {{ message.by }}</p>
+        <p>Message content: {{ message.content }}</p>
+    {% endfor %}
+{% endblock %}
