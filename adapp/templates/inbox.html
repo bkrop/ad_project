@@ -4,7 +4,9 @@
 
 {% block content %}
     {% for message in messages %}
-        <p>Message from: {{ message.by }}</p>
+        <p>Message from: <a href="{{ url_for('users.user_detail', user_id=message.by.id) }}">{{ message.by }}</a></p>
+        <p>Received: {{ message.date_of_create.strftime('%Y-%m-%d %H:%M:%S') }}</p>
         <p>Message content: {{ message.content }}</p>
+        <p><a href="{{ url_for('messages.send_message', user_id=message.by.id) }}">Reply</a></p>
     {% endfor %}
 {% endblock %}

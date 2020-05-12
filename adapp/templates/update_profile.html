@@ -5,8 +5,9 @@
 {% block content %}
     <form action="" method="POST">
         {{ form.hidden_tag() }}
-        <legend>Update Profile</legend>
+        <legend>Update {{ current_user.name }}'s Profile</legend>
         <p>{{ form.description.label }} {{ form.description }}</p>
         {{ form.submit }}
+        <p>My rating: {{ current_user.rating }}</p>
     </form>
 {% endblock %}
